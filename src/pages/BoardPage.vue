@@ -1,5 +1,5 @@
 <template>
-  <a-layout-content style="padding:24px">
+  <a-layout-content style="padding:5px">
     <div class="board-wrap">
       <BaseKanbanColumn
         v-for="col in kanban.current.columns"
@@ -36,5 +36,24 @@ function addColumn() {
 </script>
 
 <style scoped>
-.board-wrap { display:flex; gap:16px; overflow-x:auto; }
+/* 仅此处：修改背景色 / 渐变 —— 其余样式保持 */
+.board-wrap{
+  display:flex;
+  gap:24px;
+  padding:24px;
+  overflow-x:auto;
+  min-height:100%;
+
+  /* ⬇⬇ 你可以在这儿换成任意背景 ⬇⬇ */
+  /* 示例 1：柔和浅灰 */
+  /* background:#f0f2f5; */
+
+  /* 示例 2：淡淡蓝灰渐变 */
+  background:linear-gradient(135deg,#b5cfbe 0%,#d1e8c2 100%);
+
+  /* 示例 3：纯色深蓝（夜间主题） */
+  /* background:#1a1b1f; */
+}
+/* 下面这行如果不需要空提示可删除 */
+.empty{padding:40px;text-align:center;font-size:18px;color:#999;}
 </style>
