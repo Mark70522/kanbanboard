@@ -22,45 +22,34 @@ const statusClass = (s?: string) => (s ? s.toLowerCase().replace(/\s/g, '') : 'n
 </script>
 
 <style scoped>
-/* ───────── 卡片主体 ───────── */
-.card-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.card-row{
+  display:flex;align-items:center;justify-content:space-between;
 
-  padding: 8px 14px;
-  margin: 4px 0;
-  border-radius: 8px;
+  padding:8px 14px;
+  margin:6px 0;
+  border-radius:8px;
 
-  background: #fff;
-  color: #000;
-  font-size: 14px;
-  font-weight: 500;
+  /* ✧ 奶灰而非纯白 */
+  background:#f7f7f7;
+  color:#000;
+  font-size:14px;font-weight:500;
 
-  cursor: grab;
-  user-select: none;
-
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-  transition: box-shadow 0.12s;
+  cursor:grab;user-select:none;
+  box-shadow:0 1px 2px rgba(0,0,0,.08);
+  transition:box-shadow .12s;
 }
-.card-row:hover  { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.20); }
-.card-row:active { cursor: grabbing; }
+.card-row:hover { box-shadow:0 3px 6px rgba(0,0,0,.13); }
+.card-row:active{ cursor:grabbing; }
 
-/* Sortable 内置类（若以后想加拖拽透明/放大，可在这里再写）
-.chosen { transform: scale(1.04); opacity: .9; }
-.ghost  { opacity: .4; }
-*/
+.title{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.icons{display:flex;gap:10px;flex-shrink:0;}
+.icon {font-size:17px;color:#8c8c8c;cursor:pointer;transition:color .15s;}
+.icon:hover{color:#1890ff;}
 
-/* 文本 & 图标 */
-.title { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-.icons { display: flex; gap: 10px; flex-shrink: 0; }
-.icon  { font-size: 17px; color: #8c8c8c; cursor: pointer; transition: color 0.15s; }
-.icon:hover { color: #1890ff; }
-
-/* 保留你的三种状态色 */
-.notstarted { background: #585858; color: #fff; }
-.inprogress { background: #1f80ff; color: #fff; }
-.done       { background: #169954; color: #fff; }
-.nostatus   { background: #666;    color: #fff; }
+/* 状态色不变 */
+.notstarted{background:#585858;color:#fff;}
+.inprogress{background:#1f80ff;color:#fff;}
+.done      {background:#169954;color:#fff;}
+.nostatus  {background:#666;color:#fff;}
 </style>
+

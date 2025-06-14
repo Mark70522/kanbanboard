@@ -79,26 +79,21 @@ const header = computed(() =>
 </script>
 
 <style scoped>
-/* ───────── 列外观 ───────── */
-.kanban-column {
-  width: 340px;
-  border-radius: 18px;
-  overflow: hidden;
+.kanban-column{
+  width:340px;border-radius:18px;overflow:hidden;
 
-  background: #fbfbfb;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  /* 由白变柔灰渐变 */
+  background:linear-gradient(180deg,#b1acac 0%,#b1acac 100%);
+  box-shadow:0 2px 6px rgba(0,0,0,.06);
 }
 
-/* ───────── 列内列表 ───────── */
-.list {
-  min-height: 90px;
-  padding-bottom: 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+/* 列内列表保持间距 */
+.list{
+  min-height:90px;
+  padding-bottom:6px;
+  display:flex;flex-direction:column;gap:6px;
 }
 
-/* ───────── 列标题 ───────── */
-.head   { display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 15px; }
-.hammer { font-size: 13px; }
+.head   {display:flex;align-items:center;gap:6px;font-weight:600;font-size:15px;}
+.hammer {font-size:13px;}
 </style>
