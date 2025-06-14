@@ -21,6 +21,7 @@ function normalizeState(raw: any) {
   return raw;
 }
 
+
 /* ---------- 类型 ---------- */
 export interface Card { id:string; title:string; desc?:string;
   deadline?:string; status:string; labelIds:string[] }
