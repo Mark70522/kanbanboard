@@ -1,9 +1,9 @@
 <template>
-  <a-card :title="header" class="kanban-column" :body-style="{padding:'8px'}">
+  <a-card :title="header" class="kanban-column" :body-style="{ padding: '10px 10px 14px' }">
     <draggable
       tag="div"
       :list="column.cards"
-      :group="'cards'"          <!-- 三列都写这个纯字符串 -->
+      :group="'cards'"
       item-key="id"
       animation="120"
       class="list"
@@ -18,7 +18,6 @@
       </template>
     </draggable>
 
-    <!-- 统一弹窗 -->
     <Teleport to="body">
       <CardDialog
         v-if="dlgOpen"
@@ -36,46 +35,70 @@ import { ref, h, computed } from 'vue';
 import { Dropdown, Menu } from 'ant-design-vue';
 import { MoreOutlined } from '@ant-design/icons-vue';
 import BaseKanbanCard from './BaseKanbanCard.vue';
-import CardDialog     from './CardDialog.vue';
-import { useKanban }  from '../store/kanban';
+import CardDialog from './CardDialog.vue';
+import { useKanban } from '../store/kanban';
 import type { Column, Card } from '../store/kanban';
 
-const props  = defineProps<{ column: Column }>();
+const props = defineProps<{ column: Column }>();
 const kanban = useKanban();
 
-/* ---------- 拖到本列时，把 status 改为列名 ---------- */
-function syncStatus(evt:any){
-  const moved:Card|undefined = evt.item.__draggable_context?.element;
-  if(moved) kanban.updateCard(props.column.id, moved.id, { status: props.column.name });
+function syncStatus(evt: any) {
+  const moved: Card | undefined = evt.item.__draggable_context?.element;
+  if (moved) kanban.updateCard(props.column.id, moved.id, { status: props.column.name });
 }
 
-/* ---------- 编辑 / 删除 ---------- */
-const dlgOpen   = ref(false);
-const editingId = ref<string|null>(null);
+const dlgOpen = ref(false);
+const editingId = ref<string | null>(null);
 
-function openDlg(card:Card){ editingId.value = card.id; dlgOpen.value = true; }
-function delCard (card:Card){
-  if(confirm('Delete this card?')) kanban.removeCard(props.column.id, card.id);
+function openDlg(card: Card) {
+  editingId.value = card.id;
+  dlgOpen.value = true;
+}
+function delCard(card: Card) {
+  if (confirm('Delete this card?')) kanban.removeCard(props.column.id, card.id);
 }
 
-/* ---------- 只剩 Rename ---------- */
-function rename(){
+function rename() {
   const name = prompt('New column name', props.column.name) || '';
-  if(name.trim()) kanban.renameColumn(props.column.id, name.trim());
+  if (name.trim()) kanban.renameColumn(props.column.id, name.trim());
 }
-const header = computed(()=>h('div',{class:'head'},[
-  h('span',{class:'hammer'},'🔨'),
-  `${props.column.name} (${props.column.cards.length})`,
-  h(Dropdown,{ overlay:h(Menu,null,{default:()=>[
-        h(Menu.Item,{onClick:rename},'Rename')
-  ]}), trigger:['click'] },
-    {default:()=>h(MoreOutlined,{style:'margin-left:4px'})}),
-]));
+const header = computed(() =>
+  h('div', { class: 'head' }, [
+    h('span', { class: 'hammer' }, '🔨'),
+    `${props.column.name} (${props.column.cards.length})`,
+    h(
+      Dropdown,
+      {
+        overlay: h(Menu, null, { default: () => [h(Menu.Item, { onClick: rename }, 'Rename')] }),
+        trigger: ['click'],
+      },
+      { default: () => h(MoreOutlined, { style: 'margin-left: 4px' }) },
+    ),
+  ]),
+);
 </script>
 
 <style scoped>
-.kanban-column{width:340px;border-radius:48px;overflow:hidden;}
-.list{min-height:80px;padding-bottom:4px;}
-.head{display:flex;align-items:center;gap:4px;}
-.hammer{font-size:12px;}
+/* ───────── 列外观 ───────── */
+.kanban-column {
+  width: 340px;
+  border-radius: 18px;
+  overflow: hidden;
+
+  background: #fbfbfb;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* ───────── 列内列表 ───────── */
+.list {
+  min-height: 90px;
+  padding-bottom: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ───────── 列标题 ───────── */
+.head   { display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 15px; }
+.hammer { font-size: 13px; }
 </style>
