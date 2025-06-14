@@ -83,7 +83,7 @@ const header = computed(() =>
   width:340px;border-radius:18px;overflow:hidden;
 
   /* 由白变柔灰渐变 */
-  background:linear-gradient(180deg,#afb2b0 0%,#8b8d8b 100%);
+  background:linear-gradient(180deg,#b5cfbe 0%,#b5cfbe 100%);
   box-shadow:0 2px 6px rgba(0,0,0,.06);
 }
 

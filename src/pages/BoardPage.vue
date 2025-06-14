@@ -49,7 +49,7 @@ function addColumn() {
   /* background:#f0f2f5; */
 
   /* 示例 2：淡淡蓝灰渐变 */
-  background:linear-gradient(135deg,#b5cfbe 0%,#d1e8c2 100%);
+  background:linear-gradient(135deg,#424242 0%,#3a3a3a 100%);
 
   /* 示例 3：纯色深蓝（夜间主题） */
   /* background:#1a1b1f; */
