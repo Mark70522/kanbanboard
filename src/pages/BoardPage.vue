@@ -1,37 +1,40 @@
 <template>
-  <a-layout-content style="padding: 24px">
-    <div style="display:flex; gap:16px; overflow-x:auto;">
+  <a-layout-content style="padding:24px">
+    <div class="board-wrap">
       <BaseKanbanColumn
-        v-for="col in board.columns"
+        v-for="col in kanban.current.columns"
         :key="col.id"
         :column="col"
-        :data-column="col.id"
       />
-      <a-button type="dashed" @click="addColumn">+ Add Column</a-button>
     </div>
   </a-layout-content>
+
+  <!-- 右下浮动按钮 -->
+  <FabButton @click="addColumn" />
 </template>
 
 <script setup lang="ts">
-import { useBoardStore } from '../store';
-import BaseKanbanColumn from '../components/BaseKanbanColumn.vue';
-import { ref } from 'vue';
-import { Modal } from 'ant-design-vue';
+import { h, ref } from 'vue';
+import { Modal, Input } from 'ant-design-vue';
+import BaseKanbanColumn from '@/components/BaseKanbanColumn.vue';
+import FabButton from '@/components/FabButton.vue';
+import { useKanban } from '@/store/kanban';
 
-const board = useBoardStore();
+const kanban = useKanban();
 
 function addColumn() {
+  const inp = ref<HTMLInputElement>();
   Modal.confirm({
     title: 'New Column',
-    content: `<input id="column-name" placeholder="Column name" />`,
+    content: () => h(Input, { ref: inp, placeholder: 'Column name' }),
     onOk() {
-      const input = document.getElementById('column-name') as HTMLInputElement;
-      if (input && input.value.trim()) {
-        board.addColumn(input.value.trim());
-      }
+      const v = inp.value?.value.trim();
+      if (v) kanban.addColumn(v);
     },
   });
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.board-wrap { display:flex; gap:16px; overflow-x:auto; }
+</style>

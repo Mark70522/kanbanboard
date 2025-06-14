@@ -1,13 +1,15 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 
-import BoardPage from '../pages/BoardPage.vue';
-
-const AboutPage = { template: '<div style="padding:24px">About page</div>' };
+/* 页面组件 */
+import BoardPage from '@/pages/BoardPage.vue';
 
 const routes: RouteRecordRaw[] = [
-  { path: '/',     name: 'board', component: BoardPage },
-  { path: '/about', name: 'about', component: AboutPage },
+  { path: '/', name: 'board', component: BoardPage },
 ];
 
-export default createRouter({ history: createWebHashHistory(), routes });
+/* ✅ “export default …” 必须存在 */
+export default createRouter({
+  history: createWebHashHistory(),
+  routes,
+});
