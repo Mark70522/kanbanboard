@@ -15,5 +15,4 @@ const pinia = createPinia();
 app.use(pinia).use(router).use(Antd);
 
 initKanbanPersistence();   // ⚠️ Pinia.use() 之后再调用
-
 app.mount('#app');
