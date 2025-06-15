@@ -18,7 +18,7 @@ import { h, ref } from 'vue';
 import { Modal, Input } from 'ant-design-vue';
 import BaseKanbanColumn from '@/components/BaseKanbanColumn.vue';
 import FabButton from '@/components/FabButton.vue';
-import { useKanban } from '@/store/kanban';
+import { useKanban } from '../store/kanban';
 
 const kanban = useKanban();
 

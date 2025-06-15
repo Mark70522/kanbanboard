@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 /* 👇 必要的 vue API 都要引入 */
-import { reactive, watch, computed, ref, h } from 'vue';
+import { reactive, watch, computed } from 'vue';
 import dayjs, { Dayjs } from 'dayjs';
 import { useKanban } from '../store/kanban';
 

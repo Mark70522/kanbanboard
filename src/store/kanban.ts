@@ -90,30 +90,33 @@ export const useKanban = defineStore('kanban', {
       }
     },
 
-removeBoard(id: string) {
-  /* 找到要删的索引 */
-  const idx = this.boards.findIndex(b => b.id === id);
-  if (idx === -1) return;
+    removeBoard(id: string) {
+      /* 找到要删的索引 */
+      const idx = this.boards.findIndex(b => b.id === id);
+      if (idx === -1) return;
 
-  /* 1️⃣ 就地删除——splice 而不是重新赋值 */
-  this.boards.splice(idx, 1);
+      /* 1️⃣ 就地删除——splice 而不是重新赋值 */
+      this.boards.splice(idx, 1);
 
-  /* 2️⃣ 若删的是当前板 → 指向第一个（若存在） */
-  if (this.currentId === id) {
-    this.currentId = this.boards[0]?.id ?? '';
-  }
+      /* 2️⃣ 若删的是当前板 → 指向第一个（若存在） */
+      if (this.currentId === id) {
+        this.currentId = this.boards[0]?.id ?? '';
+      }
 
-  /* 3️⃣ 若所有板都删光，自动建一个默认板 */
-  if (this.boards.length === 0) {
-    const def = {
-      id: crypto.randomUUID(),
-      name: 'My Board',
-      columns: makeDefaultColumns(),
-    };
-    this.boards.push(def);
-    this.currentId = def.id;
-  }
-},
+      /* 3️⃣ 若所有板都删光，自动建一个默认板 */
+      if (this.boards.length === 0) {
+        const def = {
+          id: crypto.randomUUID(),
+          name: 'My Board',
+          columns: makeDefaultColumns(),
+        };
+        this.boards.push(def);
+        this.currentId = def.id;
+      }
+    },
+    addColumn() {
+
+    }
 
   },
 });
