@@ -28,8 +28,8 @@ function addColumn() {
     title: 'New Column',
     content: () => h(Input, { ref: inp, placeholder: 'Column name' }),
     onOk() {
-      const v = inp.value?.value.trim();
-      if (v) kanban.addColumn(v);
+      
+      
     },
   });
 }

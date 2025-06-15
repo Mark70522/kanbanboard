@@ -114,10 +114,6 @@ export const useKanban = defineStore('kanban', {
         this.currentId = def.id;
       }
     },
-    addColumn() {
-
-    }
-
   },
 });
 
