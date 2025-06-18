@@ -24,8 +24,13 @@ function normalizeState(raw: any) {
 
 /* ---------- 类型 ---------- */
 export interface Card {
-  id: string; title: string; desc?: string;
-  deadline?: string; status: string; labelIds: string[]
+ id: string;
+  title: string;
+  desc?: string;
+  deadline?: string;
+  status: string;
+  labelIds: string[];
+  date?: string; // 新增：归档时间
 }
 export interface Column { id: string; name: string; cards: Card[] }
 export interface Board { id: string; name: string; columns: Column[] }

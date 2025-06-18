@@ -8,7 +8,7 @@
         <a-dropdown placement="bottomRight">
           <template #overlay>
             <a-menu>
-              <a-menu-item @click="openArchive">
+              <a-menu-item @click="showArchiveModal = true">
                 <span>Archive Document</span>
               </a-menu-item>
             </a-menu>
@@ -57,13 +57,57 @@
         allow-clear
       />
     </a-modal>
+
+    <!-- 归档文档弹窗 -->
+    <a-modal
+      v-model:open="showArchiveModal"
+      title="历史存档记录"
+      width="360px"
+      :footer="null"
+      @cancel="selectedArchive = null"
+    >
+      <div v-if="archiveList.length === 0" style="text-align:center;color:#aaa;">
+        暂无归档记录
+      </div>
+      <a-list
+        v-else
+        :data-source="archiveList"
+        :renderItem="renderArchiveItem"
+        bordered
+        size="small"
+        style="max-height:300px;overflow:auto;"
+      />
+    </a-modal>
+
+    <!-- 归档详情弹窗 -->
+<a-modal v-model:open="showArchiveDetail" title="归档详情" width="400px" :footer="null" @cancel="selectedArchive.value = null">
+  <div v-if="selectedArchive">
+    <div style="font-weight:bold;margin-bottom:8px;">
+      {{ selectedArchive?.title || selectedArchive?.id }}
+    </div>
+    <div style="color:#888;font-size:13px;margin-bottom:8px;">
+      归档时间：{{ selectedArchive?.date || '未知' }}
+    </div>
+    <div style="white-space:pre-wrap;word-break:break-all;">
+      {{ selectedArchive?.desc || '无详情内容' }}
+    </div>
+  </div>
+</a-modal>
   </aside>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, h } from 'vue';
 import { useKanban } from '../store/kanban';
 import { MoreOutlined, SettingOutlined } from '@ant-design/icons-vue';
+
+interface ArchiveItem {
+  id: string;
+  title?: string;
+  desc?: string;
+  date?: string;
+  deadline?: string;
+}
 
 const kanban = useKanban();
 const { boards, currentId } = kanban;
@@ -87,8 +131,38 @@ function remove(b:any){
     kanban.removeBoard(b.id);
   }
 }
-function openArchive() {
-  alert('打开归档文档功能（请在此处实现弹窗或页面跳转）');
+
+// 归档相关
+const showArchiveModal = ref(false);
+const selectedArchive = ref<ArchiveItem | null>(null);
+const showArchiveDetail = computed({
+  get: () => !!selectedArchive.value,
+  set: (val: boolean) => { if (!val) selectedArchive.value = null; }
+});
+
+// 假设归档数据在 kanban.archivedCards
+const archiveList = computed<ArchiveItem[]>(() => kanban.archivedCards?.map(card => ({
+  ...card,
+  date: card.date || card.deadline || '', // 你可以自定义归档时间字段
+})) ?? []);
+
+function viewArchive(item: ArchiveItem) {
+  selectedArchive.value = item;
+}
+
+// 用于 a-list 的 renderItem，带类型
+function renderArchiveItem(item: ArchiveItem) {
+  return h(
+    'div',
+    {
+      class: 'archive-item',
+      onClick: () => viewArchive(item)
+    },
+    [
+      h('span', item.title || item.id),
+      h('span', { style: 'color:#999;font-size:12px;margin-left:auto;' }, item.date || '')
+    ]
+  );
 }
 </script>
 
@@ -211,5 +285,18 @@ function openArchive() {
 }
 .more:hover{
   color:#c4e27e;
+}
+.archive-item {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.archive-item:hover {
+  background: #f6ffed;
+  color: #52c41a;
 }
 </style>
