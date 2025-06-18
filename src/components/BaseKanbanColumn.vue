@@ -32,12 +32,13 @@
 <script setup lang="ts">
 import draggable from 'vuedraggable';
 import { ref, h, computed } from 'vue';
-import { Dropdown, Menu } from 'ant-design-vue';
+import { Dropdown, Menu,Modal } from 'ant-design-vue';
 import { MoreOutlined } from '@ant-design/icons-vue';
 import BaseKanbanCard from './BaseKanbanCard.vue';
 import CardDialog from './CardDialog.vue';
 import { useKanban } from '../store/kanban';
 import type { Column, Card } from '../store/kanban';
+
 
 const props = defineProps<{ column: Column }>();
 const kanban = useKanban();
@@ -55,7 +56,15 @@ function openDlg(card: Card) {
   dlgOpen.value = true;
 }
 function delCard(card: Card) {
-  if (confirm('Delete this card?')) kanban.removeCard(props.column.id, card.id);
+  Modal.confirm({
+    title: 'delete card',
+    content: 'are you sure you want to delete this card?',
+    okText: 'delete',
+    cancelText: 'cancel',
+    onOk() {
+      kanban.removeCard(props.column.id, card.id);
+    },
+  });
 }
 
 function rename() {

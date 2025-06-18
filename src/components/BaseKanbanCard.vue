@@ -9,15 +9,26 @@
     <span class="icons" @mousedown.stop @click.stop>
       <EditOutlined class="icon" @click="$emit('edit', card)" />
       <DeleteOutlined class="icon" @click="$emit('delete', card)" />
+      <template v-if="card.status === 'Done'">
+        <a-tooltip title="archive">
+          <InboxOutlined class="icon" @click="$emit('archive', card)" />
+        </a-tooltip>
+      </template>
     </span>
   </div>
 </template>
-
 <script setup lang="ts">
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+import { EditOutlined, DeleteOutlined, InboxOutlined } from '@ant-design/icons-vue'; // 用 InboxOutlined 替代
+import { defineProps, defineEmits } from 'vue';
 import type { Card } from '../store/kanban';
+
 defineProps<{ card: Card }>();
-defineEmits<{ (e:'edit', c:Card):void; (e:'delete', c:Card):void }>();
+defineEmits<{ 
+  (e:'edit', c:Card):void; 
+  (e:'delete', c:Card):void;
+  (e:'archive', c:Card):void;
+}>();
+
 const statusClass = (s?: string) => (s ? s.toLowerCase().replace(/\s/g, '') : 'nostatus');
 </script>
 
@@ -52,4 +63,3 @@ const statusClass = (s?: string) => (s ? s.toLowerCase().replace(/\s/g, '') : 'n
 .done      {background:#169954;color:#fff;}
 .nostatus  {background:#666;color:#fff;}
 </style>
-

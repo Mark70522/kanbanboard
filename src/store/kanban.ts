@@ -29,23 +29,23 @@ export interface Card {
 }
 export interface Column { id: string; name: string; cards: Card[] }
 export interface Board { id: string; name: string; columns: Column[] }
-interface State { boards: Board[]; currentId: string }
+interface State { boards: Board[]; currentId: string; archivedCards: Card[] }
 
 /* ---------- Store ---------- */
 export const useKanban = defineStore('kanban', {
 
   state: (): State => {
-    /* ① 尝试读取存档并修复 */
     const saved = normalizeState(JSON.parse(localStorage.getItem('mpk-boards') || 'null'));
-    if (saved) return saved;
-
-    /* ② 首次启动：创建默认 Board + 3 列 */
+    if (saved) {
+      if (!saved.archivedCards) saved.archivedCards = [];
+      return saved;
+    }
     const def: Board = {
       id: crypto.randomUUID(),
       name: 'Default',
       columns: makeDefaultColumns(),
     };
-    return { boards: [def], currentId: def.id };
+    return { boards: [def], currentId: def.id, archivedCards: [] };
   },
 
   getters: {
@@ -112,6 +112,26 @@ export const useKanban = defineStore('kanban', {
         };
         this.boards.push(def);
         this.currentId = def.id;
+      }
+    },
+
+    archiveCard(colId: string, cardId: string) {
+      const col = this.current.columns.find(c => c.id === colId);
+      if (!col) return;
+      const idx = col.cards.findIndex(c => c.id === cardId);
+      if (idx === -1) return;
+      const [card] = col.cards.splice(idx, 1);
+      this.archivedCards.push(card);
+    },
+    restoreCard(cardId: string) {
+      const idx = this.archivedCards.findIndex(c => c.id === cardId);
+      if (idx === -1) return;
+      const [card] = this.archivedCards.splice(idx, 1);
+      // 恢复到当前看板的 Done 列
+      const doneCol = this.current.columns.find(c => c.name === 'Done');
+      if (doneCol) {
+        card.status = 'Done';
+        doneCol.cards.push(card);
       }
     },
   },
