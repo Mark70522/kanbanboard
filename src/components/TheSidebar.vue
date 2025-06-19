@@ -5,18 +5,11 @@
       <span class="logo">MPK</span>
       <div class="top-actions">
         <button class="add-btn" @click="dlg = true">＋</button>
-        <a-dropdown placement="bottomRight">
-          <template #overlay>
-            <a-menu>
-              <a-menu-item @click="showArchiveModal = true">
-                <span>Archive Document</span>
-              </a-menu-item>
-            </a-menu>
-          </template>
-          <a-tooltip title="Settings">
-            <SettingOutlined class="tool-icon" />
-          </a-tooltip>
-        </a-dropdown>
+ <a-dropdown placement="bottomRight">
+   <a-tooltip title="Archive">
+     <CiOutlined class="tool-icon" />
+   </a-tooltip>
+ </a-dropdown>
       </div>
     </div>
 
@@ -99,7 +92,7 @@
 <script setup lang="ts">
 import { ref, computed, h } from 'vue';
 import { useKanban } from '../store/kanban';
-import { MoreOutlined, SettingOutlined } from '@ant-design/icons-vue';
+import { MoreOutlined, CiOutlined } from '@ant-design/icons-vue';
 
 interface ArchiveItem {
   id: string;
