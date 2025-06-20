@@ -14,6 +14,7 @@
           :card="element"
           @edit="openDlg"
           @delete="delCard"
+          @archive="archiveCard"
         />
       </template>
     </draggable>
@@ -42,7 +43,9 @@ import type { Column, Card } from '../store/kanban';
 
 const props = defineProps<{ column: Column }>();
 const kanban = useKanban();
-
+function archiveCard(card: Card) {
+  kanban.archiveCard(props.column.id, card.id);
+}
 function syncStatus(evt: any) {
   const moved: Card | undefined = evt.item.__draggable_context?.element;
   if (moved) kanban.updateCard(props.column.id, moved.id, { status: props.column.name });
