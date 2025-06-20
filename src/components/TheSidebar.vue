@@ -36,14 +36,50 @@
       <a-input v-model:value="name" placeholder="Board name" @keyup.enter="create" allow-clear />
     </a-modal>
 
-    <!-- 归档文档弹窗 -->
-    <a-modal v-model:open="showArchiveModal" title="历史存档记录" width="360px" :footer="null"
-      @cancel="selectedArchive = null">
-      <div v-if="archiveList.length === 0" style="text-align:center;color:#aaa;">
-        暂无归档记录
+ <a-modal
+      v-model:open="showArchiveModal"
+      title="history archive documents"
+      width="600px"
+      :footer="null"
+      @cancel="showArchiveModal = false"
+    >
+      <div v-if="archiveList.length === 0" class="empty">
+        no archive documents
       </div>
-      <a-list v-else :data-source="archiveList" :renderItem="renderArchiveItem" bordered size="small"
-        style="max-height:300px;overflow:auto;" />
+      <a-list
+        v-else
+        :data-source="archiveList"
+        bordered
+        size="small"
+        style="max-height:300px;overflow:auto;"
+      >
+        <template #renderItem="{ item }">
+          <a-list-item @click="viewArchive(item)">
+            <a-list-item-meta
+              :title="item.title || item.id"
+              :description="item.date || ''"
+            />
+          </a-list-item>
+        </template>
+      </a-list>
+    </a-modal>
+    <!-- 存档详情弹窗 -->
+    <a-modal
+      v-model:open="showArchiveDetail"
+      title="archive details"
+      width="800px"
+      @cancel="onClose"
+    >
+      <div v-if="selectedArchive">
+        <div v-for="(value, key) in selectedArchive" :key="key" class="detail-item">
+          <span class="detail-key">{{ key }}:</span>
+          <span class="detail-value">{{ value || '无内容' }}</span>
+        </div>
+      </div>
+      <template #footer>
+        <a-button @click="onClose">Close</a-button>
+        <a-button type="primary" @click="restoreArchive">Restore</a-button>
+      </template>
     </a-modal>
   </aside>
 </template>
@@ -52,6 +88,7 @@
 import { ref, computed, h } from 'vue';
 import { useKanban } from '../store/kanban';
 import { MoreOutlined, CiOutlined } from '@ant-design/icons-vue';
+import { Button } from 'ant-design-vue';
 
 interface ArchiveItem {
   id: string;
@@ -106,6 +143,15 @@ const archiveList = computed<ArchiveItem[]>(() => kanban.archivedCards?.map(card
 
 function viewArchive(item: ArchiveItem) {
   selectedArchive.value = item;
+}
+function onClose() {
+  showArchiveDetail.value = false;
+}
+function restoreArchive() {
+  if (selectedArchive.value) {
+    kanban.restoreCard(selectedArchive.value.id);
+    showArchiveDetail.value = false;
+  }
 }
 
 // 用于 a-list 的 renderItem，带类型
