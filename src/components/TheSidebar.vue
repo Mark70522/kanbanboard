@@ -43,6 +43,19 @@
       :footer="null"
       @cancel="showArchiveModal = false"
     >
+          <!-- 搜索与排序 -->
+      <div class="search-sort">
+        <a-input
+          v-model:value="searchText"
+          placeholder="Search archives"
+          allow-clear
+          class="search-input"
+        />
+        <a-select v-model:value="sortOrder" placeholder="Sort by deadline" class="sort-select">
+          <a-select-option value="asc">asc</a-select-option>
+          <a-select-option value="desc">desc</a-select-option>
+        </a-select>
+      </div>
       <div v-if="archiveList.length === 0" class="empty">
         no archive documents
       </div>
@@ -128,18 +141,33 @@ function closeArchiveModal() {
   showArchiveModal.value = false;
 }
 
+
+// 归档列表、搜索和排序
+const searchText = ref('');
+const sortOrder = ref<'asc'|'desc'>('asc');
+const archiveList = computed<ArchiveItem[]>(() =>
+  (kanban.archivedCards ?? []).map(card => ({ ...card, date: card.date || card.deadline || '' }))
+);
+const filteredList = computed(() => {
+  return archiveList.value
+    .filter(item =>
+      [item.title, item.desc]
+        .filter(Boolean)
+        .some(str => str!.toLowerCase().includes(searchText.value.toLowerCase()))
+    )
+    .sort((a, b) => {
+      const da = a.deadline ? Date.parse(a.deadline) : 0;
+      const db = b.deadline ? Date.parse(b.deadline) : 0;
+      return sortOrder.value === 'asc' ? da - db : db - da;
+    });
+});
+
 // 归档相关
 const selectedArchive = ref<ArchiveItem | null>(null);
 const showArchiveDetail = computed({
   get: () => !!selectedArchive.value,
   set: (val: boolean) => { if (!val) selectedArchive.value = null; }
 });
-
-// 假设归档数据在 kanban.archivedCards
-const archiveList = computed<ArchiveItem[]>(() => kanban.archivedCards?.map(card => ({
-  ...card,
-  date: card.date || card.deadline || '', // 你可以自定义归档时间字段
-})) ?? []);
 
 function viewArchive(item: ArchiveItem) {
   selectedArchive.value = item;
