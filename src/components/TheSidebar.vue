@@ -98,10 +98,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, h } from 'vue';
+import { ref, computed} from 'vue';
 import { useKanban } from '../store/kanban';
 import { MoreOutlined, CiOutlined } from '@ant-design/icons-vue';
-import { Button } from 'ant-design-vue';
 
 interface ArchiveItem {
   id: string;
@@ -137,9 +136,6 @@ const showArchiveModal = ref(false);
 function openArchiveModal() {
   showArchiveModal.value = true;
 }
-function closeArchiveModal() {
-  showArchiveModal.value = false;
-}
 
 
 // 归档列表、搜索和排序
@@ -148,19 +144,6 @@ const sortOrder = ref<'asc'|'desc'>('asc');
 const archiveList = computed<ArchiveItem[]>(() =>
   (kanban.archivedCards ?? []).map(card => ({ ...card, date: card.date || card.deadline || '' }))
 );
-const filteredList = computed(() => {
-  return archiveList.value
-    .filter(item =>
-      [item.title, item.desc]
-        .filter(Boolean)
-        .some(str => str!.toLowerCase().includes(searchText.value.toLowerCase()))
-    )
-    .sort((a, b) => {
-      const da = a.deadline ? Date.parse(a.deadline) : 0;
-      const db = b.deadline ? Date.parse(b.deadline) : 0;
-      return sortOrder.value === 'asc' ? da - db : db - da;
-    });
-});
 
 // 归档相关
 const selectedArchive = ref<ArchiveItem | null>(null);
@@ -182,20 +165,6 @@ function restoreArchive() {
   }
 }
 
-// 用于 a-list 的 renderItem，带类型
-function renderArchiveItem(item: ArchiveItem) {
-  return h(
-    'div',
-    {
-      class: 'archive-item',
-      onClick: () => viewArchive(item)
-    },
-    [
-      h('span', item.title || item.id),
-      h('span', { style: 'color:#999;font-size:12px;margin-left:auto;' }, item.date || '')
-    ]
-  );
-}
 </script>
 
 <style scoped>
