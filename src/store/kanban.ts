@@ -31,6 +31,7 @@ export interface Card {
   status: string;
   labelIds: string[];
   date?: string; // 新增：归档时间
+  boardId?: string;   // 新增：原先所在的 Board ID
 }
 export interface Column { id: string; name: string; cards: Card[] }
 export interface Board { id: string; name: string; columns: Column[] }
@@ -126,13 +127,25 @@ export const useKanban = defineStore('kanban', {
       const idx = col.cards.findIndex(c => c.id === cardId);
       if (idx === -1) return;
       const [card] = col.cards.splice(idx, 1);
+
+      // 记录归档时间和所在板块
+      card.date    = new Date().toLocaleString();
+      card.boardId = this.currentId;   // <— 这里赋值
+
       this.archivedCards.push(card);
     },
+    // 恢复 Card
     restoreCard(cardId: string) {
       const idx = this.archivedCards.findIndex(c => c.id === cardId);
       if (idx === -1) return;
       const [card] = this.archivedCards.splice(idx, 1);
-      // 恢复到当前看板的 Done 列
+
+      // 切回原来的板块
+      if (card.boardId) {
+        this.currentId = card.boardId;   // <— 切板
+      }
+
+      // 放到该板的 Done 列
       const doneCol = this.current.columns.find(c => c.name === 'Done');
       if (doneCol) {
         card.status = 'Done';
