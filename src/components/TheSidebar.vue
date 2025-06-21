@@ -59,22 +59,22 @@
       <div v-if="archiveList.length === 0" class="empty">
         no archive documents
       </div>
-      <a-list
-        v-else
-        :data-source="archiveList"
-        bordered
-        size="small"
-        style="max-height:300px;overflow:auto;"
-      >
-        <template #renderItem="{ item }">
-          <a-list-item @click="viewArchive(item)">
-            <a-list-item-meta
-              :title="item.title || item.id"
-              :description="item.date || ''"
-            />
-          </a-list-item>
-        </template>
-      </a-list>
+<a-list
+  v-else
+  :data-source="filteredArchiveList"
+  bordered
+  size="small"
+  style="max-height:300px;overflow:auto;"
+>
+  <template #renderItem="{ item }">
+    <a-list-item @click="viewArchive(item)">
+      <a-list-item-meta
+        :title="item.title || item.id"
+        :description="item.date || ''"
+      />
+    </a-list-item>
+  </template>
+</a-list>
     </a-modal>
     <!-- 存档详情弹窗 -->
     <a-modal
@@ -164,6 +164,29 @@ function restoreArchive() {
     showArchiveDetail.value = false;
   }
 }
+// 新增：带搜索和排序的归档列表
+const filteredArchiveList = computed<ArchiveItem[]>(() => {
+  let list = archiveList.value;
+
+  // 搜索
+  const kw = searchText.value.trim().toLowerCase();
+  if (kw) {
+    list = list.filter(
+      item =>
+        (item.title && item.title.toLowerCase().includes(kw)) ||
+        (item.desc && item.desc.toLowerCase().includes(kw))
+    );
+  }
+
+  // 按 date 排序
+  list = [...list].sort((a, b) => {
+    const da = a.date ? new Date(a.date).getTime() : 0;
+    const db = b.date ? new Date(b.date).getTime() : 0;
+    return sortOrder.value === 'asc' ? da - db : db - da;
+  });
+
+  return list;
+});
 
 </script>
 
