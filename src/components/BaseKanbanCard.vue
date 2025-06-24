@@ -35,7 +35,7 @@ const statusClass = (s?: string) => (s ? s.toLowerCase().replace(/\s/g, '') : 'n
 const getPriorityColor = (priority: string) => {
   switch (priority) {
     case 'H':
-      return 'red';
+    return '#ec5d5d'; 
     case 'M':
       return 'orange';
     case 'L':
