@@ -338,4 +338,5 @@ const filteredArchiveList = computed<ArchiveItem[]>(() => {
   background: #f6ffed;
   color: #52c41a;
 }
+
 </style>

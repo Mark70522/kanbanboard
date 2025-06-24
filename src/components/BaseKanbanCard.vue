@@ -7,7 +7,15 @@
     <span class="title">{{ card.title }}</span>
 
     <span class="icons" @mousedown.stop @click.stop>
+      <a-tag 
+  v-if="card.status === 'In progress' && card.priority" 
+  :style="{ backgroundColor: getPriorityColor(card.priority), color: '#fff' }"
+  class="priority-tag"
+>
+  {{ card.priority }}
+</a-tag>
       <EditOutlined class="icon" @click="$emit('edit', card)" />
+          <!-- 优先级标签 -->
       <DeleteOutlined class="icon" @click="$emit('delete', card)" />
       <template v-if="card.status === 'Done'">
         <a-tooltip title="archive">
@@ -30,6 +38,19 @@ defineEmits<{
 }>();
 
 const statusClass = (s?: string) => (s ? s.toLowerCase().replace(/\s/g, '') : 'nostatus');
+// 优先级颜色映射
+const getPriorityColor = (priority: string) => {
+  switch (priority) {
+    case 'H':
+      return 'red';
+    case 'M':
+      return 'orange';
+    case 'L':
+      return 'green';
+    default:
+      return 'blue';
+  }
+};
 </script>
 
 <style scoped>

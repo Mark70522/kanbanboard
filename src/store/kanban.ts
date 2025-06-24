@@ -31,6 +31,7 @@ export interface Card {
   status: string;
   labelIds: string[];
   date?: string; // 新增：归档时间
+  priority?: string; // 新增优先级字段
   boardId?: string;   // 新增：原先所在的 Board ID
 }
 export interface Column { id: string; name: string; cards: Card[] }
