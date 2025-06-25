@@ -31,9 +31,13 @@
     </ul>
 
     <!-- 创建 Board -->
-    <a-modal v-model:open="dlg" title="Create Board" ok-text="Create" cancel-text="Cancel" :mask-closable="false"
-      @ok="create">
+    <a-modal v-model:open="dlg" title="Create Board" ok-text="Create" cancel-text="Cancel" :mask-closable="false" @ok="create">
       <a-input v-model:value="name" placeholder="Board name" @keyup.enter="create" allow-clear />
+    </a-modal>
+
+    <!-- 重命名 Board -->
+    <a-modal v-model:open="renameDialogVisible" title="Rename Board" ok-text="Rename" cancel-text="Cancel" :mask-closable="false" @ok="confirmRename">
+      <a-input v-model:value="newName" placeholder="Board name" allow-clear />
     </a-modal>
 
  <a-modal
@@ -98,10 +102,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed} from 'vue';
-import { useKanban } from '../store/kanban';
+import { ref,computed } from 'vue';
+import { Modal } from 'ant-design-vue';
 import { MoreOutlined, CiOutlined } from '@ant-design/icons-vue';
-
+import { useKanban } from '../store/kanban';
 interface ArchiveItem {
   id: string;
   title?: string;
@@ -109,28 +113,47 @@ interface ArchiveItem {
   date?: string;
   deadline?: string;
 }
-
 const kanban = useKanban();
 const { boards, currentId } = kanban;
 
-const boardInitial = (b: any) => ((b?.name ?? '').trim().slice(0, 1) || '?').toUpperCase();
-
 const dlg = ref(false);
 const name = ref('');
+
+const renameDialogVisible = ref(false);
+const boardToRename = ref({ id: '', name: '' });
+const newName = ref('');
+
+const boardInitial = (b: any) => ((b?.name ?? '').trim().slice(0, 1) || '?').toUpperCase();
+
 function create() {
   const n = name.value.trim();
   if (!n) return;
   kanban.addBoard(n);
-  name.value = ''; dlg.value = false;
+  name.value = '';
+  dlg.value = false;
 }
+
 function rename(b: any) {
-  const n = prompt('Rename board', b.name) ?? '';
-  if (n.trim()) kanban.renameBoard(b.id, n);
+  boardToRename.value = { id: b.id, name: b.name };
+  newName.value = b.name;
+  renameDialogVisible.value = true;
 }
-function remove(b: any) {
-  if (confirm(`Delete board “${b.name}” ?`)) {
-    kanban.removeBoard(b.id);
+
+function confirmRename() {
+  if (newName.value.trim()) {
+    kanban.renameBoard(boardToRename.value.id, newName.value.trim());
   }
+  renameDialogVisible.value = false;
+}
+
+function remove(b: any) {
+  Modal.confirm({
+    title: `Delete board “${b.name}”?`,
+    okType: 'danger',
+    onOk() {
+      kanban.removeBoard(b.id);
+    },
+  });
 }
 const showArchiveModal = ref(false);
 function openArchiveModal() {
